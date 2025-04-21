@@ -30,6 +30,6 @@ int s21_calc_complements(matrix_t *A, matrix_t *result);
 int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 
 int s21_is_valide_matrix(matrix_t *A);
-int s21_minor(matrix_t *A, matrix_t *minor, int row_to_esc, int column_to_esc);
+int s21_minor(matrix_t *A, int row_to_esc, int column_to_esc, double *result);
 
 #endif  // S21_MATRIX_H_

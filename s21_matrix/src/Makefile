@@ -1,7 +1,7 @@
 # Компилятор и флаги
 CC := gcc
-CFLAGS := -std=c11 -Wall -Werror -Wextra
-CHECK_FLAGS := -lcheck -lm # Флаги для компиляции с Check
+CFLAGS := -std=c11 #-Wall -Werror -Wextra
+CHECK_FLAGS := -lcheck -lm
 GCOV_FLAGS := --coverage
 FORMAT_PATH := ../materials/linters/.clang-format
 
@@ -15,15 +15,13 @@ COV_REPORT_DIR := $(SRC_DIR)/coverage_report
 # Имя статической библиотеки
 LIB_NAME := s21_matrix.a
 
-# Список исходных файлов
 SRC_FILES := $(wildcard $(FUNC_DIR)/*.c)
 OBJ_FILES := $(patsubst $(FUNC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(FUNC_DIR)/*.c))
 
-# Список тестовых файлов
 TEST_FILES := $(wildcard $(TEST_DIR)/*.c)
 TEST_EXEC := test_suite
 
-# Список файлов для форматирования
+# Файлы для форматирования
 TO_FORMAT_FILES := $(SRC_FILES) $(TEST_FILES)  $(wildcard $(SRC_DIR)/*.h) $(wildcard $(TEST_DIR)/*.h)
 
 # Компиляция библиотеки

@@ -1,42 +1,13 @@
 #include "../s21_matrix.h"
 
-// Вычисляет матрицу алгебраических дополнений
-static int s21_calculate_complements(matrix_t *A, matrix_t *complement) {
-  int ret = s21_create_matrix(A->rows, A->columns, complement);
-  if (ret != S21_OK) return S21_ERROR;
-
-  for (int i = 0; i < A->rows; i++) {
-    for (int j = 0; j < A->columns; j++) {
-      matrix_t minor;
-      if (s21_create_matrix(A->rows - 1, A->columns - 1, &minor) != S21_OK)
-        return S21_ERROR;
-
-      if (s21_minor(A, &minor, i, j) != S21_OK) {
-        s21_remove_matrix(&minor);
-        return S21_ERROR;
-      }
-
-      double minor_det;
-      ret = s21_determinant(&minor, &minor_det);
-      s21_remove_matrix(&minor);
-      if (ret != S21_OK) return S21_ERROR;
-
-      complement->matrix[i][j] = ((i + j) % 2 == 0 ? 1 : -1) * minor_det;
-    }
-  }
-  return S21_OK;
-}
-
-// Делит матрицу на определитель
-static void s21_divide_by_determinant(matrix_t *matrix, double det) {
-  for (int i = 0; i < matrix->rows; i++) {
-    for (int j = 0; j < matrix->columns; j++) {
-      matrix->matrix[i][j] /= det;
-    }
-  }
-}
-
-// Основная функция обратной матрицы
+/*
+ * Вычисление обратной матрицы.
+ * @param A Указатель на исходную квадратную матрицу.
+ * @param result Указатель на структуру для сохранения обратной матрицы.
+ * @return Код ошибки (0 - успех;
+ * 1 - ошибка, некорректная матрица;
+ * 2 - ошибка вычисления).
+ */
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   if (!s21_is_valide_matrix(A) || result == NULL || A->rows != A->columns) {
     return S21_ERROR;
@@ -54,7 +25,7 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   }
 
   matrix_t complement, transpose_complement;
-  if (s21_calculate_complements(A, &complement) != S21_OK) {
+  if (s21_calc_complements(A, &complement) != S21_OK) {
     return S21_ERROR;
   }
 
@@ -69,7 +40,6 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     return S21_ERROR;
   }
 
-  s21_divide_by_determinant(&transpose_complement, det);
-  *result = transpose_complement;
+  s21_mult_number(&transpose_complement, 1. / det, result);
   return S21_OK;
 }

@@ -15,8 +15,6 @@ START_TEST(test_create_matrix_success) {
       ck_assert_double_eq(mat.matrix[i][j], 0.0);
     }
   }
-
-  // Освобождаем память после теста
   s21_remove_matrix(&mat);
 }
 END_TEST
@@ -47,7 +45,7 @@ END_TEST
 // Тест ошибки выделения памяти (большая матрица)
 START_TEST(test_create_matrix_memory_allocation_failure) {
   matrix_t mat;
-  int result = s21_create_matrix(1000000, 1000000, &mat);
+  int result = s21_create_matrix(1e6, INT32_MAX, &mat);
   ck_assert_int_eq(result, S21_ERROR);
 }
 END_TEST

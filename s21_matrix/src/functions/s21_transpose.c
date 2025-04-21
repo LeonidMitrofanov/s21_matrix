@@ -9,10 +9,8 @@
  * некорректная матрица; 2 - ошибка вычисления).
  */
 int s21_transpose(matrix_t *A, matrix_t *result) {
-  // Проверка на корректность матрицы и результата
   if (!s21_is_valide_matrix(A)) return S21_ERROR;
 
-  // Инициализация result
   if (s21_create_matrix(A->columns, A->rows, result) == S21_ERROR)
     return S21_ERROR;
 

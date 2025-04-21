@@ -1,7 +1,8 @@
 #include "test_s21_matrix.h"
 
 START_TEST(test_s21_minor_valid) {
-  matrix_t A, minor;
+  matrix_t A;
+  double minor;
   s21_create_matrix(3, 3, &A);
 
   // Заполнение матрицы A
@@ -15,35 +16,31 @@ START_TEST(test_s21_minor_valid) {
   A.matrix[2][1] = 8.0;
   A.matrix[2][2] = 9.0;
 
-  ck_assert_int_eq(s21_minor(&A, &minor, 1, 1), S21_OK);
-
-  // Ожидаемый минор после удаления 2-й строки и 2-го столбца
-  ck_assert_double_eq(minor.matrix[0][0], 1.0);
-  ck_assert_double_eq(minor.matrix[0][1], 3.0);
-  ck_assert_double_eq(minor.matrix[1][0], 7.0);
-  ck_assert_double_eq(minor.matrix[1][1], 9.0);
+  ck_assert_int_eq(s21_minor(&A, 1, 1, &minor), S21_OK);
+  ck_assert_double_eq(minor, -12.0);
 
   s21_remove_matrix(&A);
-  s21_remove_matrix(&minor);
 }
 END_TEST
 
 START_TEST(test_s21_minor_invalid_matrix) {
-  matrix_t A, minor;
+  matrix_t A;
+  double minor;
   A.rows = 0;
   A.columns = 0;
   A.matrix = NULL;
 
-  ck_assert_int_eq(s21_minor(&A, &minor, 0, 0), S21_ERROR);
+  ck_assert_int_eq(s21_minor(&A, 0, 0, &minor), S21_ERROR);
 }
 END_TEST
 
 START_TEST(test_s21_minor_single_element_matrix) {
-  matrix_t A, minor;
+  matrix_t A;
+  double minor;
   s21_create_matrix(1, 1, &A);
   A.matrix[0][0] = 42.0;
 
-  ck_assert_int_eq(s21_minor(&A, &minor, 0, 0), S21_ERROR);
+  ck_assert_int_eq(s21_minor(&A, 0, 0, &minor), S21_ERROR);
 
   s21_remove_matrix(&A);
 }
