@@ -24,18 +24,14 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     return S21_OK;
   }
 
+  char error_flag = 0;
   matrix_t complement, transpose_complement;
-  if (s21_calc_complements(A, &complement) != S21_OK) {
-    return S21_ERROR;
-  }
-
-  if (s21_transpose(&complement, &transpose_complement) != S21_OK) {
-    s21_remove_matrix(&complement);
-    return S21_ERROR;
-  }
+  error_flag += s21_calc_complements(A, &complement) != S21_OK;
+  error_flag += s21_transpose(&complement, &transpose_complement) != S21_OK;
   s21_remove_matrix(&complement);
+  error_flag += s21_create_matrix(A->rows, A->columns, result) != S21_OK;
 
-  if (s21_create_matrix(A->rows, A->columns, result) != S21_OK) {
+  if (error_flag) {
     s21_remove_matrix(&transpose_complement);
     return S21_ERROR;
   }
