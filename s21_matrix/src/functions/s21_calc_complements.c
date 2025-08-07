@@ -14,16 +14,22 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (A->rows != A->columns) return S21_CALC_ERROR;
 
   int n = A->rows;
-  if (s21_create_matrix(n, n, result) != S21_OK) return S21_ERROR;
-
-  double minor = 0;
+  if (n == 1) {
+    if (s21_create_matrix(1, 1, result) != S21_OK) return S21_ERROR;
+    result->matrix[0][0] = 1.0;
+    return S21_OK;
+  }
+  s21_create_matrix(n, n, result);
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      if (s21_minor(A, i, j, &minor) != S21_OK) {
+      double minor = 0.0;
+      int status = s21_minor(A, i, j, &minor);
+      if (status != S21_OK) {
         s21_remove_matrix(result);
         return S21_CALC_ERROR;
       }
-      result->matrix[i][j] = (1 - 2 * ((i + j) % 2)) * minor;
+      double sign = ((i + j) % 2 == 0) ? 1.0 : -1.0;
+      result->matrix[i][j] = sign * minor;
     }
   }
   return S21_OK;

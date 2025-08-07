@@ -9,33 +9,26 @@
  * 2 - ошибка вычисления).
  */
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
-  if (!s21_is_valide_matrix(A) || result == NULL || A->rows != A->columns) {
-    return S21_ERROR;
-  }
+  if (!s21_is_valide_matrix(A) || result == NULL) return S21_ERROR;
+  if (A->rows != A->columns) return S21_ERROR;
 
-  double det;
-  if (s21_determinant(A, &det) != S21_OK || det == 0) {
-    return S21_CALC_ERROR;
-  }
-
+  double det = 0.0;
+  if (s21_determinant(A, &det) != S21_OK) return S21_CALC_ERROR;
+  if (det == 0) return S21_CALC_ERROR;
   if (A->rows == 1) {
-    s21_create_matrix(1, 1, result);
-    result->matrix[0][0] = 1.0 / det;
+    if (s21_create_matrix(1, 1, result) != S21_OK) return S21_ERROR;
+    result->matrix[0][0] = 1.0 / A->matrix[0][0];
     return S21_OK;
   }
 
-  char error_flag = 0;
-  matrix_t complement, transpose_complement;
-  error_flag += s21_calc_complements(A, &complement) != S21_OK;
-  error_flag += s21_transpose(&complement, &transpose_complement) != S21_OK;
-  s21_remove_matrix(&complement);
-  error_flag += s21_create_matrix(A->rows, A->columns, result) != S21_OK;
+  matrix_t complements;
+  s21_calc_complements(A, &complements);
+  matrix_t transposed;
+  s21_transpose(&complements, &transposed);
 
-  if (error_flag) {
-    s21_remove_matrix(&transpose_complement);
-    return S21_ERROR;
-  }
+  int status = s21_mult_number(&transposed, 1.0 / det, result);
+  s21_remove_matrix(&complements);
+  s21_remove_matrix(&transposed);
 
-  s21_mult_number(&transpose_complement, 1. / det, result);
-  return S21_OK;
+  return status;
 }
