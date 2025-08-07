@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Coverage
+src/coverage_report/
+
+# Objects
+src/objects/
+
+# Test
+test_suite
