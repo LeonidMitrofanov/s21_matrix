@@ -59,3 +59,4 @@ src/objects/
 
 # Test
 test_suite
+test_io
