@@ -39,7 +39,7 @@ START_TEST(test_s21_inverse_matrix_invalid_non_square) {
   matrix_t A, result;
   s21_create_matrix(2, 3, &A);
   int status = s21_inverse_matrix(&A, &result);
-  ck_assert_int_eq(status, S21_ERROR);
+  ck_assert_int_eq(status, S21_CALC_ERROR);
   s21_remove_matrix(&A);
 }
 END_TEST
@@ -286,7 +286,7 @@ START_TEST(test_s21_inverse_matrix_rectangular) {
     }
   }
   int status = s21_inverse_matrix(&A, &result);
-  ck_assert_int_eq(status, S21_ERROR);
+  ck_assert_int_eq(status, S21_CALC_ERROR);
   s21_remove_matrix(&A);
 }
 END_TEST
