@@ -10,7 +10,7 @@
  */
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   if (!s21_is_valide_matrix(A) || result == NULL) return S21_ERROR;
-  if (A->rows != A->columns) return S21_ERROR;
+  if (A->rows != A->columns) return S21_CALC_ERROR;
 
   double det = 0.0;
   if (s21_determinant(A, &det) != S21_OK) return S21_CALC_ERROR;
