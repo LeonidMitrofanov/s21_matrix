@@ -1,6 +1,6 @@
 # Компилятор и флаги
 CC := gcc
-CFLAGS := -std=c11 #-Wall -Werror -Wextra
+CFLAGS := -std=c11 -Wall -Werror -Wextra
 CHECK_FLAGS := -lcheck -lm
 GCOV_FLAGS := --coverage
 FORMAT_PATH := ../materials/linters/.clang-format
@@ -31,7 +31,7 @@ $(LIB_NAME): $(OBJ_FILES)
 # Компиляция объектных файлов
 $(OBJ_DIR)/%.o: $(FUNC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Компиляция тестов
 $(TEST_EXEC): $(LIB_NAME) $(TEST_FILES)
@@ -39,6 +39,12 @@ $(TEST_EXEC): $(LIB_NAME) $(TEST_FILES)
 
 # Запуск тестов
 test: $(TEST_EXEC)
+	@./$(TEST_EXEC)
+
+# Проверка на утечку памяти
+asan: CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+asan: clean $(TEST_EXEC)
+	@echo "\033[1;34m=== Запуск с AddressSanitizer (быстрее всего) ===\033[0m"
 	@./$(TEST_EXEC)
 
 # Генерация отчета покрытия кода в HTML-формате
@@ -74,4 +80,4 @@ check-style:
 	@clang-format -n -style=file:$(FORMAT_PATH) $(TO_FORMAT_FILES)
 
 # Указание целей, которые не являются файлами
-.PHONY: all clean clean_tests test gcov_report format check-style
+.PHONY: all clean clean_tests test gcov_report format check-style check-leaks
