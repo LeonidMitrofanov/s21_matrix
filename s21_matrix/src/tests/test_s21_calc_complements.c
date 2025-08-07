@@ -1,12 +1,29 @@
 #include "test_s21_matrix.h"
 
+// Тест на вычисление алгебраических дополнений для матрицы 1x1
+START_TEST(test_s21_calc_complements_valid_1x1) {
+  matrix_t mat, result, expected;
+  s21_create_matrix(1, 1, &mat);
+  s21_create_matrix(1, 1, &expected);
+
+  mat.matrix[0][0] = 5.0;
+  expected.matrix[0][0] = 1.0;
+
+  ck_assert_int_eq(s21_calc_complements(&mat, &result), S21_OK);
+  ck_assert_double_eq_tol(result.matrix[0][0], expected.matrix[0][0], 1e-7);
+
+  s21_remove_matrix(&mat);
+  s21_remove_matrix(&result);
+  s21_remove_matrix(&expected);
+}
+END_TEST
+
 // Тест на корректность вычисления алгебраических дополнений для 3x3 матрицы
 START_TEST(test_s21_calc_complements_valid_3x3) {
   matrix_t mat, result, expected;
   s21_create_matrix(3, 3, &mat);
   s21_create_matrix(3, 3, &expected);
 
-  // Исходная матрица
   mat.matrix[0][0] = 1.0;
   mat.matrix[0][1] = 2.0;
   mat.matrix[0][2] = 3.0;
@@ -17,7 +34,6 @@ START_TEST(test_s21_calc_complements_valid_3x3) {
   mat.matrix[2][1] = 2.0;
   mat.matrix[2][2] = 1.0;
 
-  // Ожидаемый результат
   expected.matrix[0][0] = 0.0;
   expected.matrix[0][1] = 10.0;
   expected.matrix[0][2] = -20.0;
@@ -47,9 +63,7 @@ END_TEST
 START_TEST(test_s21_calc_complements_non_square) {
   matrix_t mat, result;
   s21_create_matrix(2, 3, &mat);
-
   ck_assert_int_eq(s21_calc_complements(&mat, &result), S21_CALC_ERROR);
-
   s21_remove_matrix(&mat);
 }
 END_TEST
@@ -60,13 +74,11 @@ START_TEST(test_s21_calc_complements_valid_2x2) {
   s21_create_matrix(2, 2, &mat);
   s21_create_matrix(2, 2, &expected);
 
-  // Исходная матрица
   mat.matrix[0][0] = 1.0;
   mat.matrix[0][1] = 2.0;
   mat.matrix[1][0] = 3.0;
   mat.matrix[1][1] = 4.0;
 
-  // Ожидаемый результат
   expected.matrix[0][0] = 4.0;
   expected.matrix[0][1] = -3.0;
   expected.matrix[1][0] = -2.0;
@@ -79,7 +91,6 @@ START_TEST(test_s21_calc_complements_valid_2x2) {
       ck_assert_double_eq_tol(result.matrix[i][j], expected.matrix[i][j], 1e-7);
     }
   }
-
   s21_remove_matrix(&mat);
   s21_remove_matrix(&result);
   s21_remove_matrix(&expected);
@@ -104,6 +115,7 @@ Suite *s21_calc_complements_suite(void) {
   s = suite_create("\033[45ms21_calc_complements\033[0m");
   tc_core = tcase_create("Core");
 
+  tcase_add_test(tc_core, test_s21_calc_complements_valid_1x1);
   tcase_add_test(tc_core, test_s21_calc_complements_valid_3x3);
   tcase_add_test(tc_core, test_s21_calc_complements_valid_2x2);
   tcase_add_test(tc_core, test_s21_calc_complements_null_pointer);
